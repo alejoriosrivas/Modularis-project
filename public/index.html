@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en"/>
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Employees API</title>
+    <!-- ICONS -->
+    <script src="https://kit.fontawesome.com/5d2e0509ed.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="./css/main.css"/>
+</head>
+<body>
+
+    <header>
+
+        <div class="header">
+
+            <nav class="header_navbar">
+
+                <div class="header_navbar-logo--container">
+
+                    <a href="#">
+                        <figure>
+                            <img src="https://www.modularis.com/wp-content/uploads/2020/05/modularis-logo-color.png" alt="">
+                        </figure>
+                    </a>
+                    
+                </div>
+
+                <div class="header_navbar-menu--container">
+
+                    <ul>
+
+                        <li>
+                            <a href="#">Home</a>
+                        </li>
+                        <li>
+                            <a href="#">Page</a>
+                        </li>
+                        <li>
+                            <a href="#">Page</a>
+                        </li>
+                        
+                    </ul>
+                    
+                </div>
+                
+            </nav>
+            
+        </div>
+        
+    </header>
+
+    <main>
+
+        <div class="content">
+
+            <section id="cre"></section>
+
+            <section id="section_1">
+
+                <div class="content_employees">
+
+                    <div class="content_employees-title">
+
+                        <h1>
+                            Employees
+                        </h1>
+                        
+                    </div>
+
+                    <div class="content_employees-create">
+
+                        <div class="content_employees-create--button">
+
+                            <button id="createEmployeeBtn">
+                                NEW EMPLOYEE
+                            </button>
+
+                        </div>
+    
+                        <table class="content_employees-table">
+        
+                            <thead>
+
+                                <tr>
+                                    <th>ID</th>
+                                    <th>FIRST NAME</th>
+                                    <th>LAST NAME</th>
+                                    <th>STATUS</th>
+                                    <th>ACTIONS</th>
+                                </tr>
+                                
+                            </thead>
+
+                            <tbody id="listBody">
+
+
+                                
+                            </tbody>
+                            
+                        </table>
+
+                    </div>
+
+                </div>
+    
+            </section>
+
+            <section id="handling_data">
+
+                <form id="form" class="content_employees-form hidden">
+
+                    <div class="person_id-input">
+
+                        <label for="personId">ID</label>
+                        <input type="text" id="personId" value="" placeholder="Example. 12345678">
+                        
+                    </div>
+            
+                    <div class="first_name-input">
+            
+                        <label for="firstName">First name</label>
+                        <input type="text" id="firstName" value="" placeholder="Pancho">
+                        
+                    </div>
+            
+                    <div class="last_name-input">
+            
+                        <label for="lastName">Last name</label>
+                        <input type="text" id="lastName" value="" placeholder="Villa...">
+                        
+                    </div>
+
+                    <button id="createBtn" type="button">Save</button>
+                    
+                </form>
+                
+            </section>
+            
+        </div>
+        
+    </main>
+
+    <footer>
+
+        <div class="footer_content">
+
+            <h1>DESIGNED BY ALEJANDRO TR</h1>
+            
+        </div> 
+        
+    </footer>
+    
+    <script src="./../bundle.js"></script>
+</body>
+</html>

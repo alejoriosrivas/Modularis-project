@@ -1,0 +1,348 @@
+/* ====== IMPORTS ====== */
+/* ======== FONT ======= */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap');
+
+/* ====== GLOBALS ====== */
+:root {
+    --bg-color: #e0e0e0;
+    --color1: #5f5f5f;
+    --color1-hv: #525252;
+    --color2: #3030fa;
+    --color2-hv: #2222cf;
+    --color3: #FFFFFF;
+    --family: 'Roboto', sans-serif, 'arial';
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: 0;
+    /* border: 1px solid red; */
+}
+
+body {
+    background-color: var(--bg-color);
+}
+
+button {
+    border: none;
+    cursor: pointer;
+}
+
+h1 {
+    color: var(--color1);
+    font-family: var(--family);
+}
+
+li {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+section {
+    margin: 10px;
+}
+
+.active {
+    transition: .1s;
+    color: var(--color3);
+    background-color: #02b302;
+}
+
+.inactive {
+    transition: .1s;
+    color: var(--color3);
+    background-color: red;
+}
+
+/* SETTED BY SCRIPTS */
+
+.hidden {
+    visibility: hidden;
+} 
+/* //////////////////// */
+/* ////// HEADER ////// */
+/* //////////////////// */
+
+header .header {
+    background-color: white;
+}
+
+header .header_navbar {
+    padding: 20px 30px;
+    display: flex;
+    height: inherit;
+    align-items: center;
+    grid-gap: 20px;
+}
+
+header .header_navbar-logo--container img {
+    width: 240px;
+}
+
+header .header_navbar-logo--container a {
+    cursor: pointer;
+}
+
+header .header_navbar-menu--container ul {
+    display: flex;
+    grid-gap: 20px;
+    transition: .3s;
+    font-family: var(--family);
+}
+
+header .header_navbar-menu--container ul li {
+    position: relative;
+    width: 50px;
+    height:  35px;
+}
+
+header .header_navbar-menu--container ul li a {
+    transition: .3s;
+    position: absolute;
+    color: var(--color1);
+}
+
+header .header_navbar-menu--container ul li:hover > a  {
+    background-color: gray;
+    padding: 8px;
+    color: white;
+    cursor: pointer;
+}
+
+/* ////////////////////////// */
+/* ////// MAIN CONTENT ////// */
+/* ////////////////////////// */
+
+main .content {
+    max-width: 50%;
+    margin: 50px auto;
+}
+
+main #section_1 .content_employees .content_employees-title {
+    margin: 20px 0;
+}
+
+main #section_1 .content_employees-create {
+    border-radius: 5px;
+}
+
+main #section_1 .content_employees-create--button {
+    margin: 20px 0;
+}
+
+main #section_1 .content_employees-create--button button:focus {
+    outline: none;
+    background-color: var(--color2);
+}
+
+main #section_1 .content_employees-create--button button:hover {
+    background-color: var(--color2-hv);
+}
+
+main #section_1 .content_employees-create {
+    padding: 20px 45px;
+    background-color: var(--color3);
+}
+
+main #section_1 .content_employees-create--button {
+    text-align: end;
+}
+
+main #section_1 .content_employees-create--button button {
+    margin: 0 0 20px;
+    padding: 15px 25px;
+    border-radius: 5px;
+    color: var(--color3);
+    transition: .1s;
+    background-color: var(--color2);
+}
+
+/* ////////////////////////// */
+/* /////// MAIN TABLE /////// */
+/* ////////////////////////// */
+
+table {
+    width: 100%;
+}
+
+table thead th {
+    color: var(--color1);
+    padding: 0 0 10px;
+    text-align: left;
+    text-transform: uppercase;
+    font-family: var(--family);
+}
+
+table thead th:nth-child(4) {
+    text-align: center;
+}
+
+table thead th:last-child {
+    text-align: end;
+}
+
+table tbody td {
+    color: var(--color1);
+    font-family: var(--family);
+}
+
+table tbody td {
+    border-bottom: 1px solid rgb(197, 197, 197);
+    padding: 3px 0;
+}
+
+table tbody td:nth-child(4) {
+    text-align: center;
+}
+
+table tbody td:last-child {
+    text-align: end;
+}
+
+table tbody td:last-child i {
+    color: var(--color1);
+    margin: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: .1s;
+}
+
+table tbody td:last-child i:first-child:hover {
+    color: green;
+}
+
+table tbody td:last-child i:last-child:hover {
+    color: red;
+}
+
+table tbody td button {
+    cursor: pointer;
+    padding: 10px;
+    width: 100px;
+    border-radius: 20px;
+    text-transform: uppercase;
+}
+
+table tbody td button.active:hover {
+    background-color: #019901;
+}
+
+
+table tbody td button.inactive:hover {
+    background-color: rgb(218, 0, 0);
+} 
+
+footer {
+    text-align: center;
+    background-color: var(--color2);
+}
+
+footer h1 {
+    color: var(--color3);
+    padding: 50px;
+}
+
+/* ////////////////////////// */
+/* ////////// FORM ////////// */
+/* ////////////////////////// */
+
+form {
+    padding: 20px;
+    border-radius: 5px;
+    background-color: white;
+}
+
+form div {
+    display: grid;
+    margin: 20px 0;
+}
+
+form div label {
+    padding: 10px 3px;
+}
+
+form div input, form div label {
+    font-family: var(--family);
+}
+
+form div input {
+    padding: 15px;
+    transition: .3s;
+    color: rgb(168, 168, 168);
+    border-radius: 5px;
+    border: 1px solid gray;
+}
+
+form div input:hover {
+    color: var(--color1);
+}
+
+form div input:focus {
+    color: var(--color1);
+    outline: none;
+    border: 2px solid #02b302;
+}
+
+form button {
+    padding: 15px 30px;
+    border-radius: 5px;
+    transition: .1s;
+    font-family: var(--family);
+    font-size: 15px;
+}
+
+form button:hover {
+    color: var(--color3);
+    background-color: var(--color2);
+}
+/* ////////////////////////// */
+/* /////// RESPONSIVE /////// */
+/* ////////////////////////// */
+
+@media screen and (max-width: 1920px) {
+    main .content {
+        max-width: 50%;
+        margin: 50px auto;
+    }
+    main #section_1 .content_employees-create--button {
+        text-align: end;
+    }
+}
+
+@media screen and (max-width: 1366px) {
+    main .content {
+        max-width:80%;
+        margin: 50px auto;
+    }
+    
+    main #section_1 .content_employees-create--button {
+        text-align: end;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .header_navbar {
+        justify-content: center;
+    }
+
+    main .content {
+        max-width: 95%;
+        margin: 50px auto;
+    }
+
+    .header_navbar-menu--container li {
+        display: none;
+    }
+
+    .content_employees-create {
+        overflow: scroll;
+    }
+    
+    main #section_1 .content_employees-create--button {
+        text-align: start;
+    }
+}
