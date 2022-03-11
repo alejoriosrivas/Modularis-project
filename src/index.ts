@@ -2,12 +2,19 @@
 import { v4 as uuidv4 } from 'uuid';
 
 // Getting all HTML elements that we're gonna manipulate
-const form              = document.querySelector('#form')              as HTMLFormElement;
-const personIdInput     = document.querySelector('#personId')          as HTMLInputElement; 
-const firstNameInput    = document.querySelector('#firstName')         as HTMLInputElement; 
-const lastNameInput     = document.querySelector('#lastName')          as HTMLInputElement; 
-const saveEmployeeData  = document.querySelector('#createBtn')         as HTMLButtonElement;
-const createEmployeeBtn = document.querySelector('#createEmployeeBtn') as HTMLButtonElement;
+const form               = document.querySelector('#form')                       as HTMLFormElement;
+const personSSNInput     = document.querySelector('#personSSNInput')             as HTMLInputElement; 
+const firstNameInput     = document.querySelector('#firstNameInput')             as HTMLInputElement; 
+const lastNameInput      = document.querySelector('#lastNameInput')              as HTMLInputElement; 
+const personIdInput      = document.querySelector('#personIdInput')              as HTMLInputElement;
+const saveEmployeeData   = document.querySelector('#createBtn')                  as HTMLButtonElement;
+const createEmployeeBtn  = document.querySelector('#createEmployeeBtn')          as HTMLButtonElement;
+const contentEmployees   = document.querySelector('#content_employees')          as HTMLElement; 
+const contentForm        = document.querySelector('#content_form')               as HTMLElement; 
+const deleteEmpModal     = document.querySelector('#deleteEmployeeConfirmModal') as HTMLElement; 
+const editStatusEmpModal = document.querySelector('#changeEmployeeStatusModal')  as HTMLElement; 
+const modalBtnCancel     = document.querySelector('#modalBtnCancel')             as HTMLButtonElement;
+const modalBtnConfirm    = document.querySelector('#modalBtnConfirm')            as HTMLButtonElement;
 
 // Variable created for evaluating if creating or updating in form
 let editing: boolean = false; 
@@ -27,24 +34,22 @@ const headers = new Headers({
 
 // Thats the consumer for the service to bring here all Employees
 let employees: [] = [];
-const getUsers = new Request(_APIUrl, {
+const getAllUsersRequest = new Request(_APIUrl, {
     method : 'GET',
     mode   : 'cors',
     headers: headers
 });
 const getAllUsers = () => {
-    fetch(getUsers)
-    .then(response => response.json())
-    .then(responseJson => {
-        employees = responseJson;
-        renderTemplate();
-    })
-    .catch(err => new Error(err));
+    fetch(getAllUsersRequest)
+        .then(response => response.json())
+        .then(responseJson => {employees = responseJson; console.log(employees)})
+        .then(() => renderTemplate())
+        .catch(err => new Error(err));
 };
 
 // Service consumer that bring to front a employee consulted by ID
 let employee: any = [];
-const getEmployee = (userID: string) => {
+const getEmployeeByIdRequest = (userID: string) => {
     return new Request(`${_APIUrl}(${userID})`, {
         method : 'GET',
         mode   : 'cors',
@@ -52,14 +57,14 @@ const getEmployee = (userID: string) => {
     });
 };
 const getEmployeeById = (userID: string) => {
-    fetch(getEmployee(userID))
+    fetch(getEmployeeByIdRequest(userID))
         .then(response => response.json())
         .then(responseJson => employee = responseJson)
         .catch(err => new Error(err));
 };
 
 // Standing Service consumer to Create new Employees
-const create = (data: any) => {
+const createEmplRequest = (data: any) => {
     return new Request(_APIUrl, {
         method : 'POST',
         mode   : 'cors',
@@ -68,15 +73,13 @@ const create = (data: any) => {
     })
 };
 const createEmployee = (data: any) => {
-    fetch(create(data))
-        .then(response => {
-            getAllUsers();
-        })
-        .catch(err => new Error(err));
+    fetch(createEmplRequest(data))
+        .then(() => getAllUsers() )
+        .catch(err => console.log(new Error(err)));
 } ;
 
 // Service consumer to update a employee 
-const updateEmpl = (data: any) => {
+const updateEmplRequest = (data: any) => {
     return new Request(_APIUrl, {
         method : 'PUT',
         mode   : 'cors',
@@ -85,15 +88,13 @@ const updateEmpl = (data: any) => {
     });
 }
 const updateEmployee = (data: any) => {
-    fetch(updateEmpl(data))
-        .then(response => {
-            getAllUsers();
-        })
+    fetch(updateEmplRequest(data))
+        .then(() => getAllUsers())
         .catch(err => new Error(err));
 };
 
 // Service to delete employee by id
-const deleteEmpl = (employeeID: string) => {
+const deleteEmplRequest = (employeeID: string) => {
     return new Request(`${_APIUrl}(${employeeID})`, {
         method : 'DELETE',
         mode   : 'cors',
@@ -101,9 +102,8 @@ const deleteEmpl = (employeeID: string) => {
     });
 };
 const deleteEmployee = (employeeID: string) => {
-    fetch(deleteEmpl(employeeID))
-        .then(response => response.json())
-        .then(responseJson => console.log(responseJson))
+    fetch(deleteEmplRequest(employeeID))
+        .then(() => getAllUsers())
         .catch(err => new Error(err));
 };
 
@@ -118,23 +118,28 @@ function loadAPIConsumed() {
 }
 
 // Function created to render Listeners, HTML elements, consuming the service...
-function renderTemplate(): void {
+function renderTemplate() {
+    printEmployeesTableList();
+    // Rendering all EventListeners when the app is starting 
+    addEvenListenerListToElements();
+}
 
+function printEmployeesTableList() {
     let htmlTableContent = '';
 
     // We are creating an for cycle to render all employees inside the list, one by one
     employees.forEach((employee: any) => {
 
-        const { SSN, FirstName, LastName, StatusDV, PersonID } = employee;
+        const { SSN, FirstName, LastName, Status, PersonID } = employee;
 
         htmlTableContent += `
             <tr>
                 <td> ${ SSN } </td>
                 <td> ${ FirstName } </td>
                 <td> ${ LastName } </td>
-                <td> <button data-id="${PersonID}" id="statusToggler" class="${ (StatusDV === 'Active') ? 'active' : 'inactive' }">${ StatusDV }</button> </td>
+                <td> <button data-id="${PersonID}" data-status="${Status}" id="statusToggler" class="${ (Status === 0) ? 'active' : 'inactive' }">${ (Status === 0) ? 'ACTIVE' : 'INACTIVE' }</button> </td>
                 <td> 
-                    <i id="editEmployee" data-id="${PersonID}" class="fa-solid fa-pen-to-square"></i> 
+                    <i id="editEmployee" data-id="${PersonID}" data-lname="${LastName}" data-ssn="${SSN}" data-name="${FirstName}" class="fa-solid fa-pen-to-square"></i> 
                     <i id="deleteEmployee" data-id="${PersonID}" class="fa-solid fa-trash-can"></i>
                 </td>
             </tr>
@@ -142,67 +147,167 @@ function renderTemplate(): void {
     });
     // After iterating all employees, we are setting up into the HTML
     $('#listBody').innerHTML = htmlTableContent;
+}
 
+function addEvenListenerListToElements() {
     // Thats a iterator for each deleteEmployee button to add to it a listener, to every time we click on the button, it'll delete the selected Employee
-    $$('#deleteEmployee').forEach(eliminarEmployeeBtn => {
-        eliminarEmployeeBtn.addEventListener('click', (employee) => {
-            const employeeID: string = (employee.target as HTMLButtonElement).getAttribute('data-id') as string;
-            
-            form.classList.add('hidden');
-            deleteEmployee(employeeID);
-            loadAPIConsumed();
-        })
-    })
+    addEventListenerToDeleteEmployeeElement();
 
     // Iterator for adding listeners to every editEmployee button, every time we click on the button, it'll get the selected Employee data to the form, to be able to modify it
-    $$('#editEmployee').forEach(editEmployeeBtn => {
-        editEmployeeBtn.addEventListener('click', (emp) => {
-            const employeeID: string = (emp.target as HTMLButtonElement).getAttribute('data-id') as string;
-            console.log(employee)
-            editing = true;
-            getEmployeeById(employeeID);
-            editEmployee(employee);
-        });
-    })
+    addEventListenerToEditEmployeeElement();
 
     // that's a eventListener adder by a for each cycle, to be able to update the user state, just clicking on the button 'active' or 'inactive'
+    addEventListenerToStatusTogglerBtnElement();
+    
+    // Adding createEmployeeBtn listener, to show the form, and reset possibly data inside
+    addEventListenerToCreateEmployeeBtnElement();
+    
+    // Adding listener to saveEmployeeData to save the data, based on if is updating or saving data of the Employee for first time (creating...)
+    addEventListenerToSaveEmployeeDataElement();
+}
+
+function activateEventListenersForModalBtns(personID: string, action: string, status?: any) {
+    activateEventListenersForModals(personID, action, status);
+}
+
+function activateEventListenersForModals(personID: string, action: string, status?: any) {
+    addEventListenerCancelBtnModalElement(action);
+    addEventListenerConfirmEmployeeBtnModalElement(personID, action, status);
+}
+
+function addEventListenerCancelBtnModalElement(action: string) {
+    
+    $$('#modalBtnCancel').forEach(cancelModalBtn => {
+        cancelModalBtn.addEventListener('click', () => {
+            if (action === 'delete') {
+                deleteEmpModal.classList.add('hidden');
+            } else if (action === 'status') {
+                editStatusEmpModal.classList.add('hidden');
+            }
+        });
+    })
+}
+
+function addEventListenerConfirmEmployeeBtnModalElement(personID: string, action: string, status?: any) {
+    $$('#modalBtnConfirm').forEach(confirmModalBtn => {
+        confirmModalBtn.addEventListener('click', () => {
+            if (action === 'delete') {
+                deleteEmployee(personID)
+                deleteEmpModal.classList.add('hidden')
+            } else if (action === 'status') {
+                updateEmployeeStatus(personID, status)
+                editStatusEmpModal.classList.add('hidden')
+            }
+        });
+    })
+}
+
+function addEventListenerToDeleteEmployeeElement() {
+    $$('#deleteEmployee').forEach(eliminarEmployeeBtn => {
+        eliminarEmployeeBtn.addEventListener('click', (employee) => {
+            const personID: string = (employee.target as HTMLButtonElement).getAttribute('data-id') as string;
+
+            deleteEmpModal.classList.remove('hidden')
+
+            activateEventListenersForModalBtns(personID, 'delete');
+
+            contentForm.classList.add('hidden');
+        })
+    })
+}
+
+function addEventListenerToEditEmployeeElement() {
+    $$('#editEmployee').forEach(editEmployeeBtn => {
+        editEmployeeBtn.addEventListener('click', (emp) => {
+            editing = true;
+            const PersonID : string = (emp.target as HTMLButtonElement).getAttribute('data-id') as string;
+            const SSN      : string = (emp.target as HTMLElement).getAttribute('data-ssn') as string;
+            const FirstName: string = (emp.target as HTMLElement).getAttribute('data-name') as string;
+            const LastName : string = (emp.target as HTMLElement).getAttribute('data-lname') as string;
+            // Saving employee info to persist the data
+            employee = {
+                PersonID,
+                SSN,
+                FirstName,
+                LastName
+            }
+            // getEmployeeById(employeeID);
+            setEmployeeDataIntoFormToEdit(employee);
+        });
+    })
+}
+
+function addEventListenerToStatusTogglerBtnElement() {
     $$('#statusToggler').forEach(updateEmployeeStatusBtn => {
+        // emp (employee)
         updateEmployeeStatusBtn.addEventListener('click', (emp) => {
             const employeeID: string = (emp.target as HTMLButtonElement).getAttribute('data-id') as string;
+            const employeeStatus: any = (emp.target as HTMLElement).getAttribute('data-status');
             editing = true;
-            getEmployeeById(employeeID)
+
+            editStatusEmpModal.classList.remove('hidden')
+
             let newStatus: number;
-            if (employee == 0) {
+            
+            if (employeeStatus == 0) {
                 newStatus = 1;
             } else {
                 newStatus = 0;
             }
-            updateEmployee(transformEmployeeDataToJSON(employeeID, newStatus));
+
+            activateEventListenersForModalBtns(employeeID, 'status', newStatus);
         })
     })
-    
-    // Adding createEmployeeBtn listener, to show the form, and reset possibly data inside
+}
+
+function addEventListenerToCreateEmployeeBtnElement() {
     createEmployeeBtn.addEventListener('click', () => {
         editing = false;
         form.reset();
-        form.classList.remove('hidden');
+        contentEmployees.classList.add('hidden')
+        contentForm.classList.remove('hidden');
     });
+}
 
-    // Adding listener to saveEmployeeData to save the data, based on if is updating or saving data of the Employee for first time (creating...)
+function addEventListenerToSaveEmployeeDataElement() {
     saveEmployeeData.addEventListener('click', () => {
-
+         
         if ( editing ) {
-            let employeeID = employee.PersonID;
-            updateEmployee(transformEmployeeDataToJSON(employeeID));
+
+            employee = {
+                PersonID : personIdInput.value,
+                SSN      : personSSNInput.value,
+                LastName : lastNameInput.value,
+                FirstName: firstNameInput.value
+            }
+
+            updateEmployee(employee)
+
             form.reset();
+
+            contentForm.classList.add('hidden')
+            contentEmployees.classList.remove('hidden')
+
         } else {
-            createEmployee(transformEmployeeDataToJSON())
+            employee = {
+                PersonID : personIdInput.value,
+                SSN      : personSSNInput.value,
+                LastName : lastNameInput.value,
+                FirstName: firstNameInput.value
+            }
+            createEmployee(transformEmployeeDataToJSON(employee))
+
+            contentForm.classList.add('hidden')
+            contentEmployees.classList.remove('hidden')
+
             form.reset();
         }
         // loadAPIConsumed();
     });
 }
+ 
 
+// FUNCTIONS QUERYSELECTOR FOR HTMLELEMENTS THAT DOESN'T NEED DECLARE VARIABLE IN TS
 // Function that gives us the facility to add listeners to an specific HTMLelement
 function $(tagSelector: string): HTMLElement {
     return document.querySelector(tagSelector) as HTMLElement;
@@ -214,30 +319,40 @@ function $$(tagSelector: string): NodeListOf<Element> {
 }
 
 // That set up the editing data into the form
-function editEmployee(data: any) {
+function setEmployeeDataIntoFormToEdit(data: any) {
 
-    personIdInput.value  = data.SSN;
+    personIdInput.value  = data.PersonID;
+    personSSNInput.value = data.SSN;
     lastNameInput.value  = data.LastName;
     firstNameInput.value = data.FirstName;
 
-    form.classList.remove('hidden');
+    contentEmployees.classList.add('hidden')
+    contentForm.classList.remove('hidden');
 }
 
 // Transforming the first body of the Employee, to a new formated body to be able to update it in the Service consume
-function transformEmployeeDataToJSON(personID?: string, status?: number) {
+function transformEmployeeDataToJSON(data: any) {
 
     return {
-        "PersonID"           : personID ? personID : uuidv4(),
-        "FirstName"          : firstNameInput.value,
-        "LastName"           : lastNameInput.value,
+        "PersonID"           : data.PersonID != '' ? data.PersonID : uuidv4(),
+        "FirstName"          : data.FirstName,
+        "LastName"           : data.LastName,
         "LastUpdatedBy"      : "admin",
         "LastUpdatedDate"    : new Date(),
-        "SSN"                : personIdInput.value,
+        "SSN"                : data.SSN,
         "EmployeeNo"         : (Math.floor(Math.random() * 10000)).toString(),
         "EmploymentEndDate"  : null,
         "EmploymentStartDate": new Date,
-        "Status"             : status ? status : 0
+        "Status"             : 0
     }
+}
+
+function updateEmployeeStatus(personID: string, status: number) {
+    const employeeJSON = {
+        PersonID: personID,
+        Status  : status
+    }
+    updateEmployee(employeeJSON);
 }
 
 loadAPIConsumed();
