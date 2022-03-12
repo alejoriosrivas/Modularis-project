@@ -1,0 +1,54 @@
+/* //////////////////// */
+/* ////// HEADER ////// */
+/* //////////////////// */
+
+header .header {
+    background-color: white;
+}
+
+header .header_navbar {
+    padding: 20px 30px;
+    display: flex;
+    height: inherit;
+    align-items: center;
+    grid-gap: 20px;
+}
+
+header .header_navbar-logo--container img {
+    width: 240px;
+}
+
+header .header_navbar-logo--container a {
+    cursor: pointer;
+}
+
+header .header_navbar-menu--container ul {
+    display: flex;
+    grid-gap: 20px;
+    transition: .3s;
+    font-family: var(--family);
+}
+
+header .header_navbar-menu--container ul li {
+    position: relative;
+    width: 50px;
+    height:  35px;
+}
+
+header .header_navbar-menu--container ul li a {
+    transition: .3s;
+    position: absolute;
+    color: var(--color1);
+}
+
+header .header_navbar-menu--container ul li:hover > a  {
+    background-color: #4f4ff8;
+    padding: 8px;
+    color: white;
+    cursor: pointer;
+}
+
+
+
+
+

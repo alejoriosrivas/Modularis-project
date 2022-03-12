@@ -1,0 +1,71 @@
+/* ====== IMPORTS ====== */
+/* ======== FONT ======= */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap');
+
+/* ====== GLOBALS ====== */
+:root {
+    --bg-color: #e0e0e0;
+    --color0: #a0a0a0;
+    --color1: #5f5f5f;
+    --color1-hv: #525252;
+    --color2: #3030fa;
+    --color2-hv: #2222cf;
+    --color3: #FFFFFF;
+    --color-warn: #d14d4d;
+    --family: 'Roboto', sans-serif, 'arial';
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: 0;
+    /* border: 1px solid red; */
+}
+
+body {
+    background-color: var(--bg-color);
+}
+
+button {
+    border: none;
+    cursor: pointer;
+}
+
+h1 {
+    color: var(--color1);
+    font-family: var(--family);
+}
+
+li {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* section {
+    margin: 10px;
+} */
+
+.active {
+    transition: .2s;
+    color: var(--color3);
+    background-color: #48b97d;
+}
+
+.inactive {
+    transition: .2s;
+    color: var(--color3);
+    background-color: var(--color-warn);
+}
+
+/* SETTED BY SCRIPTS */
+
+.hidden {
+    display: none !important;
+} 
+
+.dp-none {
+    display: none;
+}

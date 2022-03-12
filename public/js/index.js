@@ -16,6 +16,9 @@ var deleteEmpModal = document.querySelector('#deleteEmployeeConfirmModal');
 var editStatusEmpModal = document.querySelector('#changeEmployeeStatusModal');
 var modalBtnCancel = document.querySelector('#modalBtnCancel');
 var modalBtnConfirm = document.querySelector('#modalBtnConfirm');
+var editingEmplTitle = document.querySelector('#editingEmployeeTitle');
+var cancelSavingEmplData = document.querySelector('#cancelCreationBtn');
+var employeeStatusInput = document.querySelector('#employeeStatusInput');
 // Variable created for evaluating if creating or updating in form
 var editing = false;
 // Api URL that consumes the service
@@ -118,7 +121,7 @@ function printEmployeesTableList() {
     // We are creating an for cycle to render all employees inside the list, one by one
     employees.forEach(function (employee) {
         var SSN = employee.SSN, FirstName = employee.FirstName, LastName = employee.LastName, Status = employee.Status, PersonID = employee.PersonID;
-        htmlTableContent += "\n            <tr>\n                <td> ".concat(SSN, " </td>\n                <td> ").concat(FirstName, " </td>\n                <td> ").concat(LastName, " </td>\n                <td> <button data-id=\"").concat(PersonID, "\" data-status=\"").concat(Status, "\" id=\"statusToggler\" class=\"").concat((Status === 0) ? 'active' : 'inactive', "\">").concat((Status === 0) ? 'ACTIVE' : 'INACTIVE', "</button> </td>\n                <td> \n                    <i id=\"editEmployee\" data-id=\"").concat(PersonID, "\" data-lname=\"").concat(LastName, "\" data-ssn=\"").concat(SSN, "\" data-name=\"").concat(FirstName, "\" class=\"fa-solid fa-pen-to-square\"></i> \n                    <i id=\"deleteEmployee\" data-id=\"").concat(PersonID, "\" class=\"fa-solid fa-trash-can\"></i>\n                </td>\n            </tr>\n        ");
+        htmlTableContent += "\n            <tr>\n                <td> ".concat(SSN, " </td>\n                <td> ").concat(FirstName, " </td>\n                <td> ").concat(LastName, " </td>\n                <td> <button data-id=\"").concat(PersonID, "\" data-status=\"").concat(Status, "\" id=\"statusToggler\" class=\"").concat((Status === 0) ? 'active' : 'inactive', "\">").concat((Status === 0) ? 'ACTIVE' : 'INACTIVE', "</button> </td>\n                <td> \n                    <i id=\"editEmployee\" data-id=\"").concat(PersonID, "\" data-lname=\"").concat(LastName, "\" data-ssn=\"").concat(SSN, "\" data-name=\"").concat(FirstName, "\" data-status=\"").concat(Status, "\" class=\"fa-solid fa-pen-to-square\"></i> \n                    <i id=\"deleteEmployee\" data-id=\"").concat(PersonID, "\" class=\"fa-solid fa-trash-can\"></i>\n                </td>\n            </tr>\n        ");
     });
     // After iterating all employees, we are setting up into the HTML
     $('#listBody').innerHTML = htmlTableContent;
@@ -134,10 +137,15 @@ function addEvenListenerListToElements() {
     addEventListenerToCreateEmployeeBtnElement();
     // Adding listener to saveEmployeeData to save the data, based on if is updating or saving data of the Employee for first time (creating...)
     addEventListenerToSaveEmployeeDataElement();
+    addEventListenerToEmployeeStatusInput();
+}
+function addEventListenerToEmployeeStatusInput() {
+    employeeStatusInput.addEventListener('click', function () {
+        console.log(employeeStatusInput.checked);
+    });
 }
 function activateEventListenersForModalBtns(personID, action, status) {
     activateEventListenersForModals(personID, action, status);
-    console.log(personID);
 }
 function activateEventListenersForModals(personID, action, status) {
     addEventListenerCancelBtnModalElement(action);
@@ -187,14 +195,16 @@ function addEventListenerToEditEmployeeElement() {
             var SSN = emp.target.getAttribute('data-ssn');
             var FirstName = emp.target.getAttribute('data-name');
             var LastName = emp.target.getAttribute('data-lname');
+            var Status = emp.target.getAttribute('data-status');
             // Saving employee info to persist the data
             employee = {
                 PersonID: PersonID,
                 SSN: SSN,
                 FirstName: FirstName,
-                LastName: LastName
+                LastName: LastName,
+                Status: Status,
             };
-            // getEmployeeById(employeeID);
+            editingEmplTitle.innerHTML = "> ".concat(FirstName, " ").concat(LastName);
             setEmployeeDataIntoFormToEdit(employee);
         });
     });
@@ -233,26 +243,38 @@ function addEventListenerToSaveEmployeeDataElement() {
                 PersonID: personIdInput.value,
                 SSN: personSSNInput.value,
                 LastName: lastNameInput.value,
-                FirstName: firstNameInput.value
+                FirstName: firstNameInput.value,
+                Status: employeeStatusInput.checked ? 0 : 1,
+                StatusSV: employeeStatusInput.checked ? 'Active' : 'Suspended'
             };
+            console.log(employee);
             updateEmployee(employee);
             form.reset();
             contentForm.classList.add('hidden');
             contentEmployees.classList.remove('hidden');
+            editingEmplTitle.innerHTML = '';
         }
         else {
             employee = {
                 PersonID: personIdInput.value,
                 SSN: personSSNInput.value,
                 LastName: lastNameInput.value,
-                FirstName: firstNameInput.value
+                FirstName: firstNameInput.value,
+                Status: employeeStatusInput.checked ? 0 : 1,
+                StatusSV: employeeStatusInput.checked ? 'Active' : 'Suspended'
             };
+            console.log(employee);
             createEmployee(transformEmployeeDataToJSON(employee));
             contentForm.classList.add('hidden');
             contentEmployees.classList.remove('hidden');
             form.reset();
         }
-        // loadAPIConsumed();
+    });
+    cancelSavingEmplData.addEventListener('click', function () {
+        employee = {};
+        editingEmplTitle.innerHTML = '';
+        contentEmployees.classList.remove('hidden');
+        contentForm.classList.add('hidden');
     });
 }
 // FUNCTIONS QUERYSELECTOR FOR HTMLELEMENTS THAT DOESN'T NEED DECLARE VARIABLE IN TS
@@ -266,26 +288,28 @@ function $$(tagSelector) {
 }
 // That set up the editing data into the form
 function setEmployeeDataIntoFormToEdit(data) {
-    personIdInput.value = data.PersonID;
     personSSNInput.value = data.SSN;
+    personIdInput.value = data.PersonID;
     lastNameInput.value = data.LastName;
     firstNameInput.value = data.FirstName;
+    employeeStatusInput.checked = data.Status == 0 ? true : false;
     contentEmployees.classList.add('hidden');
     contentForm.classList.remove('hidden');
 }
 // Transforming the first body of the Employee, to a new formated body to be able to update it in the Service consume
 function transformEmployeeDataToJSON(data) {
     return {
-        "PersonID": data.PersonID != '' ? data.PersonID : (0, uuid_1.v4)(),
-        "FirstName": data.FirstName,
-        "LastName": data.LastName,
-        "LastUpdatedBy": "admin",
-        "LastUpdatedDate": new Date(),
-        "SSN": data.SSN,
-        "EmployeeNo": (Math.floor(Math.random() * 10000)).toString(),
-        "EmploymentEndDate": null,
-        "EmploymentStartDate": new Date,
-        "Status": 0
+        PersonID: data.PersonID != '' ? data.PersonID : (0, uuid_1.v4)(),
+        FirstName: data.FirstName,
+        LastName: data.LastName,
+        LastUpdatedBy: "admin",
+        LastUpdatedDate: new Date(),
+        SSN: data.SSN,
+        EmployeeNo: (Math.floor(Math.random() * 10000)).toString(),
+        EmploymentEndDate: null,
+        EmploymentStartDate: new Date,
+        Status: employeeStatusInput.checked ? 1 : 0,
+        statusDV: employeeStatusInput.checked ? 'Active' : 'Suspended'
     };
 }
 function updateEmployeeStatus(personID, status) {

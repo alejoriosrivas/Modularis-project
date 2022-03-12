@@ -2,19 +2,22 @@
 import { v4 as uuidv4 } from 'uuid';
 
 // Getting all HTML elements that we're gonna manipulate
-const form               = document.querySelector('#form')                       as HTMLFormElement;
-const personSSNInput     = document.querySelector('#personSSNInput')             as HTMLInputElement; 
-const firstNameInput     = document.querySelector('#firstNameInput')             as HTMLInputElement; 
-const lastNameInput      = document.querySelector('#lastNameInput')              as HTMLInputElement; 
-const personIdInput      = document.querySelector('#personIdInput')              as HTMLInputElement;
-const saveEmployeeData   = document.querySelector('#createBtn')                  as HTMLButtonElement;
-const createEmployeeBtn  = document.querySelector('#createEmployeeBtn')          as HTMLButtonElement;
-const contentEmployees   = document.querySelector('#content_employees')          as HTMLElement; 
-const contentForm        = document.querySelector('#content_form')               as HTMLElement; 
-const deleteEmpModal     = document.querySelector('#deleteEmployeeConfirmModal') as HTMLElement; 
-const editStatusEmpModal = document.querySelector('#changeEmployeeStatusModal')  as HTMLElement; 
-const modalBtnCancel     = document.querySelector('#modalBtnCancel')             as HTMLButtonElement;
-const modalBtnConfirm    = document.querySelector('#modalBtnConfirm')            as HTMLButtonElement;
+const form                 = document.querySelector('#form')                       as HTMLFormElement;
+const personSSNInput       = document.querySelector('#personSSNInput')             as HTMLInputElement; 
+const firstNameInput       = document.querySelector('#firstNameInput')             as HTMLInputElement; 
+const lastNameInput        = document.querySelector('#lastNameInput')              as HTMLInputElement; 
+const personIdInput        = document.querySelector('#personIdInput')              as HTMLInputElement;
+const saveEmployeeData     = document.querySelector('#createBtn')                  as HTMLButtonElement;
+const createEmployeeBtn    = document.querySelector('#createEmployeeBtn')          as HTMLButtonElement;
+const contentEmployees     = document.querySelector('#content_employees')          as HTMLElement; 
+const contentForm          = document.querySelector('#content_form')               as HTMLElement; 
+const deleteEmpModal       = document.querySelector('#deleteEmployeeConfirmModal') as HTMLElement; 
+const editStatusEmpModal   = document.querySelector('#changeEmployeeStatusModal')  as HTMLElement; 
+const modalBtnCancel       = document.querySelector('#modalBtnCancel')             as HTMLButtonElement;
+const modalBtnConfirm      = document.querySelector('#modalBtnConfirm')            as HTMLButtonElement;
+const editingEmplTitle     = document.querySelector('#editingEmployeeTitle')       as HTMLElement; 
+const cancelSavingEmplData = document.querySelector('#cancelCreationBtn')          as HTMLButtonElement;
+const employeeStatusInput  = document.querySelector('#employeeStatusInput')        as HTMLInputElement;
 
 // Variable created for evaluating if creating or updating in form
 let editing: boolean = false; 
@@ -139,7 +142,7 @@ function printEmployeesTableList() {
                 <td> ${ LastName } </td>
                 <td> <button data-id="${PersonID}" data-status="${Status}" id="statusToggler" class="${ (Status === 0) ? 'active' : 'inactive' }">${ (Status === 0) ? 'ACTIVE' : 'INACTIVE' }</button> </td>
                 <td> 
-                    <i id="editEmployee" data-id="${PersonID}" data-lname="${LastName}" data-ssn="${SSN}" data-name="${FirstName}" class="fa-solid fa-pen-to-square"></i> 
+                    <i id="editEmployee" data-id="${PersonID}" data-lname="${LastName}" data-ssn="${SSN}" data-name="${FirstName}" data-status="${Status}" class="fa-solid fa-pen-to-square"></i> 
                     <i id="deleteEmployee" data-id="${PersonID}" class="fa-solid fa-trash-can"></i>
                 </td>
             </tr>
@@ -164,6 +167,14 @@ function addEvenListenerListToElements() {
     
     // Adding listener to saveEmployeeData to save the data, based on if is updating or saving data of the Employee for first time (creating...)
     addEventListenerToSaveEmployeeDataElement();
+
+    addEventListenerToEmployeeStatusInput();
+}
+
+function addEventListenerToEmployeeStatusInput() {
+    employeeStatusInput.addEventListener('click', () => {
+        console.log(employeeStatusInput.checked)
+    })
 }
 
 function activateEventListenersForModalBtns(personID: string, action: string, status?: any) {
@@ -176,7 +187,6 @@ function activateEventListenersForModals(personID: string, action: string, statu
 }
 
 function addEventListenerCancelBtnModalElement(action: string) {
-    
     $$('#modalBtnCancel').forEach(cancelModalBtn => {
         cancelModalBtn.addEventListener('click', () => {
             if (action === 'delete') {
@@ -224,14 +234,19 @@ function addEventListenerToEditEmployeeElement() {
             const SSN      : string = (emp.target as HTMLElement).getAttribute('data-ssn') as string;
             const FirstName: string = (emp.target as HTMLElement).getAttribute('data-name') as string;
             const LastName : string = (emp.target as HTMLElement).getAttribute('data-lname') as string;
+            const Status   : string = (emp.target as HTMLElement).getAttribute('data-status') as string;
+
             // Saving employee info to persist the data
             employee = {
                 PersonID,
                 SSN,
                 FirstName,
-                LastName
-            }
-            // getEmployeeById(employeeID);
+                LastName,
+                Status,
+            };
+
+            editingEmplTitle.innerHTML = `> ${FirstName} ${LastName}`; 
+
             setEmployeeDataIntoFormToEdit(employee);
         });
     })
@@ -278,9 +293,12 @@ function addEventListenerToSaveEmployeeDataElement() {
                 PersonID : personIdInput.value,
                 SSN      : personSSNInput.value,
                 LastName : lastNameInput.value,
-                FirstName: firstNameInput.value
+                FirstName: firstNameInput.value,
+                Status   : employeeStatusInput.checked ? 0 : 1,
+                StatusSV : employeeStatusInput.checked ? 'Active' : 'Suspended'
             }
 
+            console.log(employee)
             updateEmployee(employee)
 
             form.reset();
@@ -288,13 +306,18 @@ function addEventListenerToSaveEmployeeDataElement() {
             contentForm.classList.add('hidden')
             contentEmployees.classList.remove('hidden')
 
+            editingEmplTitle.innerHTML = '';
+
         } else {
             employee = {
                 PersonID : personIdInput.value,
                 SSN      : personSSNInput.value,
                 LastName : lastNameInput.value,
-                FirstName: firstNameInput.value
+                FirstName: firstNameInput.value,
+                Status   : employeeStatusInput.checked ? 0 : 1,
+                StatusSV : employeeStatusInput.checked ? 'Active' : 'Suspended'
             }
+            console.log(employee)
             createEmployee(transformEmployeeDataToJSON(employee))
 
             contentForm.classList.add('hidden')
@@ -302,7 +325,16 @@ function addEventListenerToSaveEmployeeDataElement() {
 
             form.reset();
         }
-        // loadAPIConsumed();
+    });
+
+    cancelSavingEmplData.addEventListener('click', () => {
+
+        employee = {}
+
+        editingEmplTitle.innerHTML = '';
+        contentEmployees.classList.remove('hidden')
+        contentForm.classList.add('hidden');
+
     });
 }
  
@@ -321,10 +353,11 @@ function $$(tagSelector: string): NodeListOf<Element> {
 // That set up the editing data into the form
 function setEmployeeDataIntoFormToEdit(data: any) {
 
-    personIdInput.value  = data.PersonID;
-    personSSNInput.value = data.SSN;
-    lastNameInput.value  = data.LastName;
-    firstNameInput.value = data.FirstName;
+    personSSNInput.value        = data.SSN;
+    personIdInput.value         = data.PersonID;
+    lastNameInput.value         = data.LastName;
+    firstNameInput.value        = data.FirstName;
+    employeeStatusInput.checked = data.Status == 0 ? true : false;
 
     contentEmployees.classList.add('hidden')
     contentForm.classList.remove('hidden');
@@ -334,16 +367,17 @@ function setEmployeeDataIntoFormToEdit(data: any) {
 function transformEmployeeDataToJSON(data: any) {
 
     return {
-        "PersonID"           : data.PersonID != '' ? data.PersonID : uuidv4(),
-        "FirstName"          : data.FirstName,
-        "LastName"           : data.LastName,
-        "LastUpdatedBy"      : "admin",
-        "LastUpdatedDate"    : new Date(),
-        "SSN"                : data.SSN,
-        "EmployeeNo"         : (Math.floor(Math.random() * 10000)).toString(),
-        "EmploymentEndDate"  : null,
-        "EmploymentStartDate": new Date,
-        "Status"             : 0
+        PersonID           : data.PersonID != '' ? data.PersonID : uuidv4(),
+        FirstName          : data.FirstName,
+        LastName           : data.LastName,
+        LastUpdatedBy      : "admin",
+        LastUpdatedDate    : new Date(),
+        SSN                : data.SSN,
+        EmployeeNo         : (Math.floor(Math.random() * 10000)).toString(),
+        EmploymentEndDate  : null,
+        EmploymentStartDate: new Date,
+        Status             : employeeStatusInput.checked ? 1 : 0,
+        statusDV           : employeeStatusInput.checked ? 'Active' : 'Suspended'
     }
 }
 

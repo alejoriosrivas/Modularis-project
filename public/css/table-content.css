@@ -1,0 +1,79 @@
+/* ////////////////////////// */
+/* /////// MAIN TABLE /////// */
+/* ////////////////////////// */
+
+table {
+    width: 100%;
+}
+
+table tr {
+    border-bottom: 1px solid gray;
+}
+
+table thead th {
+    color: var(--color1);
+    padding: 0 0 10px;
+    text-align: left;
+    text-transform: uppercase;
+    font-family: var(--family);
+}
+
+table thead th:nth-child(4) {
+    text-align: center;
+}
+
+table thead th:last-child {
+    text-align: end;
+}
+
+table tbody td {
+    color: var(--color1);
+    font-family: var(--family);
+}
+
+table tbody td {
+    /* border-bottom: 1px solid rgb(197, 197, 197); */
+    padding: 3px 0;
+}
+
+table tbody td:nth-child(4) {
+    text-align: center;
+}
+
+table tbody td:last-child {
+    text-align: end;
+}
+
+table tbody td:last-child i {
+    color: var(--color1);
+    margin: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: .1s;
+}
+
+table tbody td:last-child i:first-child:hover {
+    color: green;
+}
+
+table tbody td:last-child i:last-child:hover {
+    color: var(--color-warn);
+}
+
+table tbody td button {
+    cursor: pointer;
+    padding: 10px;
+    width: 100px;
+    border-radius: 20px;
+    text-transform: uppercase;
+}
+
+table tbody td button.active:hover {
+    background-color: #019901;
+}
+
+
+table tbody td button.inactive:hover {
+    background-color: rgb(218, 0, 0);
+} 
+

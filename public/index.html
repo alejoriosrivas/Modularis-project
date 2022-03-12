@@ -7,7 +7,15 @@
     <title>Employees API</title>
     <!-- ICONS -->
     <script src="https://kit.fontawesome.com/5d2e0509ed.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="./css/main.css"/>
+    <!-- STYLES -->
+    <link rel="stylesheet" href="./css/globals-content.css"/>
+    <link rel="stylesheet" href="./css/header-content.css"/>
+    <link rel="stylesheet" href="./css/main-content.css"/>
+    <link rel="stylesheet" href="./css/table-content.css"/>
+    <link rel="stylesheet" href="./css/form-content.css"/>
+    <link rel="stylesheet" href="./css/modal-content.css"/>
+    <link rel="stylesheet" href="./css/footer-content.css"/>
+    <link rel="stylesheet" href="./css/responsive.css"/>
 </head>
 <body>
 
@@ -56,7 +64,7 @@
             <div class="content_title">
 
                 <h1>
-                    Employees
+                    Employees <span id="editingEmployeeTitle"></span>
                 </h1>
                 
             </div>
@@ -119,7 +127,7 @@
                                 
                             </div>
                     
-                            <div class="last_name-input">
+                            <div class="person_lastname-input">
                     
                                 <label for="lastNameInput">Last name</label>
                                 <input type="text" id="lastNameInput" value="" placeholder="Villa...">
@@ -129,18 +137,29 @@
                             <div class="person_id-input">
         
                                 <label for="personIdInput">ID</label>
-                                <input type="text" id="personIdInput" value="" placeholder="Example. 12345678">
+                                <input type="text" id="personIdInput" value="" placeholder="Example. 123a28-24gs31-3441dfd">
                                 
                             </div>
         
-                            <div class="person_id-input">
+                            <div class="person_ssn-input">
         
                                 <label for="personSSNInput">SSN</label>
                                 <input type="text" id="personSSNInput" value="" placeholder="Example. 12345678">
                                 
                             </div>
         
+                            <div class="person_status-input">
+        
+                                <label for="employeeStatusInput">Active</label>
+                                <div class="checkbox_container">
+                                    <input type="checkbox" id="employeeStatusInput">
+                                    <span class="checkmark"><span class="box"></span></span>
+                                </div>
+                                
+                            </div>
+        
                             <button id="createBtn" type="button">Save</button>
+                            <button id="cancelCreationBtn" type="button">Cancel</button>
                             
                         </form>
                     </div>

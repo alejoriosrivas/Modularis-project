@@ -1,0 +1,24 @@
+/* ////////////////////////// */
+/* ////////// FOOTER //////// */
+/* ////////////////////////// */
+
+.over_footer-brand {
+    text-align: center;   
+}
+
+.over_footer-brand .over_footer-brand--name {
+    font-size: 14px;
+    color: var(--color0);
+    font-family: var(--family);
+    margin: 10px 0;
+}
+
+footer {
+    text-align: center;
+    background-color: var(--color2);
+}
+
+footer h1 {
+    color: var(--color3);
+    padding: 50px;
+}
