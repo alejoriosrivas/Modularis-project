@@ -840,325 +840,402 @@ exports.default = _default;
 },{"./validate.js":14}],16:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.DOMElements = void 0;
+var DOMElements = /** @class */ (function () {
+    function DOMElements() {
+        this.form = document.querySelector('#form');
+        this.personSSNInput = document.querySelector('#personSSNInput');
+        this.firstNameInput = document.querySelector('#firstNameInput');
+        this.lastNameInput = document.querySelector('#lastNameInput');
+        this.personIdInput = document.querySelector('#personIdInput');
+        this.saveEmployeeData = document.querySelector('#createBtn');
+        this.createEmployeeBtn = document.querySelector('#createEmployeeBtn');
+        this.contentEmployees = document.querySelector('#content_employees');
+        this.contentForm = document.querySelector('#content_form');
+        this.deleteEmpModal = document.querySelector('#deleteEmployeeConfirmModal');
+        this.editStatusEmpModal = document.querySelector('#changeEmployeeStatusModal');
+        this.modalBtnCancel = document.querySelector('#modalBtnCancel');
+        this.modalBtnConfirm = document.querySelector('#modalBtnConfirm');
+        this.editingEmplTitle = document.querySelector('#editingEmployeeTitle');
+        this.cancelSavingEmplData = document.querySelector('#cancelCreationBtn');
+        this.employeeStatusInput = document.querySelector('#employeeStatusInput');
+    }
+    return DOMElements;
+}());
+exports.DOMElements = DOMElements;
+
+},{}],17:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ListenerBuilder = void 0;
+var ListenerBuilder = /** @class */ (function () {
+    function ListenerBuilder() {
+    }
+    // FUNCTIONS QUERYSELECTOR FOR HTMLELEMENTS THAT DOESN'T NEED DECLARE VARIABLE IN TS
+    // Function that gives us the facility to add listeners to an specific HTMLelement
+    ListenerBuilder.prototype.$ = function (tagSelector) {
+        return document.querySelector(tagSelector);
+    };
+    // Function to be able to add multiples listeners to a multiples buttons, that are equals, putting listeners by for each cycle
+    ListenerBuilder.prototype.$$ = function (tagSelector) {
+        return document.querySelectorAll(tagSelector);
+    };
+    return ListenerBuilder;
+}());
+exports.ListenerBuilder = ListenerBuilder;
+
+},{}],18:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Status = exports.EditorType = void 0;
+var EditorType;
+(function (EditorType) {
+    EditorType["Admin"] = "admin";
+    EditorType["System"] = "system";
+    EditorType["TechTest"] = "TechTest";
+})(EditorType = exports.EditorType || (exports.EditorType = {}));
+var Status;
+(function (Status) {
+    Status["Active"] = "Active";
+    Status["Suspended"] = "Suspended";
+})(Status = exports.Status || (exports.Status = {}));
+
+},{}],19:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ApiService = void 0;
+var api_url_1 = require("../../environment/api-url");
+var env = new api_url_1.Environment();
+var ApiService = /** @class */ (function () {
+    function ApiService() {
+        var _this = this;
+        this._APIUrl = env._APIUrl;
+        this.employees = [];
+        this.employee = {};
+        this.headers = new Headers({
+            'Accept': '*/*',
+            'Accept-Encoding': 'gzip, defiate, br',
+            'Connection': 'Keep-alive',
+            'CustomerID': 'C93F949C-41B8-4C9E-95AA-B030B31F6F3F',
+            'APIKey': 'JOhNpoolcUCi6Fnu5cAc38yJMRuHAXBne2bYq5',
+            'Content-Type': 'application/json'
+        });
+        this.getAllUsersRequest = new Request(this._APIUrl, {
+            method: 'GET',
+            mode: 'cors',
+            headers: this.headers
+        });
+        this.getEmployeeByIdRequest = function (userID) {
+            return new Request("".concat(_this._APIUrl, "(").concat(userID, ")"), {
+                method: 'GET',
+                mode: 'cors',
+                headers: _this.headers,
+            });
+        };
+        this.createEmplRequest = function (data) {
+            return new Request(_this._APIUrl, {
+                method: 'POST',
+                mode: 'cors',
+                headers: _this.headers,
+                body: JSON.stringify(data)
+            });
+        };
+        this.updateEmplRequest = function (data) {
+            return new Request(_this._APIUrl, {
+                method: 'PUT',
+                mode: 'cors',
+                headers: _this.headers,
+                body: JSON.stringify(data)
+            });
+        };
+        this.deleteEmplRequest = function (employeeID) {
+            return new Request("".concat(_this._APIUrl, "(").concat(employeeID, ")"), {
+                method: 'DELETE',
+                mode: 'cors',
+                headers: _this.headers
+            });
+        };
+    }
+    return ApiService;
+}());
+exports.ApiService = ApiService;
+
+},{"../../environment/api-url":20}],20:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Environment = void 0;
+var Environment = /** @class */ (function () {
+    function Environment() {
+        this._APIUrl = 'https://gateway.modularis.com/HRDemo/RESTActivityWebService/HRDemo.Example/Employees';
+    }
+    Environment.prototype.url = function () {
+        return this._APIUrl;
+    };
+    return Environment;
+}());
+exports.Environment = Environment;
+
+},{}],21:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Renderer = void 0;
 // uuid is a UserID random generator
 var uuid_1 = require("uuid");
-// Getting all HTML elements that we're gonna manipulate
-var form = document.querySelector('#form');
-var personSSNInput = document.querySelector('#personSSNInput');
-var firstNameInput = document.querySelector('#firstNameInput');
-var lastNameInput = document.querySelector('#lastNameInput');
-var personIdInput = document.querySelector('#personIdInput');
-var saveEmployeeData = document.querySelector('#createBtn');
-var createEmployeeBtn = document.querySelector('#createEmployeeBtn');
-var contentEmployees = document.querySelector('#content_employees');
-var contentForm = document.querySelector('#content_form');
-var deleteEmpModal = document.querySelector('#deleteEmployeeConfirmModal');
-var editStatusEmpModal = document.querySelector('#changeEmployeeStatusModal');
-var modalBtnCancel = document.querySelector('#modalBtnCancel');
-var modalBtnConfirm = document.querySelector('#modalBtnConfirm');
-var editingEmplTitle = document.querySelector('#editingEmployeeTitle');
-var cancelSavingEmplData = document.querySelector('#cancelCreationBtn');
-var employeeStatusInput = document.querySelector('#employeeStatusInput');
-// Variable created for evaluating if creating or updating in form
-var editing = false;
-// Api URL that consumes the service
-var _APIUrl = 'https://gateway.modularis.com/HRDemo/RESTActivityWebService/HRDemo.Example/Employees';
-// We're generating headers for consuming Services, setting up configuration for no having authentication errors
-var headers = new Headers({
-    'Accept': '*/*',
-    'Accept-Encoding': 'gzip, defiate, br',
-    'Connection': 'Keep-alive',
-    'CustomerID': 'C93F949C-41B8-4C9E-95AA-B030B31F6F3F',
-    'APIKey': 'JOhNpoolcUCi6Fnu5cAc38yJMRuHAXBne2bYq5',
-    'Content-Type': 'application/json'
-});
-// Thats the consumer for the service to bring here all Employees
-var employees = [];
-var getAllUsersRequest = new Request(_APIUrl, {
-    method: 'GET',
-    mode: 'cors',
-    headers: headers
-});
-var getAllUsers = function () {
-    fetch(getAllUsersRequest)
-        .then(function (response) { return response.json(); })
-        .then(function (responseJson) { employees = responseJson; console.log(employees); })
-        .then(function () { return renderTemplate(); })
-        .catch(function (err) { return new Error(err); });
-};
-// Service consumer that bring to front a employee consulted by ID
-var employee = [];
-var getEmployeeByIdRequest = function (userID) {
-    return new Request("".concat(_APIUrl, "(").concat(userID, ")"), {
-        method: 'GET',
-        mode: 'cors',
-        headers: headers,
-    });
-};
-var getEmployeeById = function (userID) {
-    fetch(getEmployeeByIdRequest(userID))
-        .then(function (response) { return response.json(); })
-        .then(function (responseJson) { return employee = responseJson; })
-        .catch(function (err) { return new Error(err); });
-};
-// Standing Service consumer to Create new Employees
-var createEmplRequest = function (data) {
-    return new Request(_APIUrl, {
-        method: 'POST',
-        mode: 'cors',
-        headers: headers,
-        body: JSON.stringify(data)
-    });
-};
-var createEmployee = function (data) {
-    fetch(createEmplRequest(data))
-        .then(function () { return getAllUsers(); })
-        .catch(function (err) { return console.log(new Error(err)); });
-};
-// Service consumer to update a employee 
-var updateEmplRequest = function (data) {
-    return new Request(_APIUrl, {
-        method: 'PUT',
-        mode: 'cors',
-        headers: headers,
-        body: JSON.stringify(data)
-    });
-};
-var updateEmployee = function (data) {
-    fetch(updateEmplRequest(data))
-        .then(function () { return getAllUsers(); })
-        .catch(function (err) { return new Error(err); });
-};
-// Service to delete employee by id
-var deleteEmplRequest = function (employeeID) {
-    return new Request("".concat(_APIUrl, "(").concat(employeeID, ")"), {
-        method: 'DELETE',
-        mode: 'cors',
-        headers: headers
-    });
-};
-var deleteEmployee = function (employeeID) {
-    fetch(deleteEmplRequest(employeeID))
-        .then(function () { return getAllUsers(); })
-        .catch(function (err) { return new Error(err); });
-};
-//////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////
-// We're building the application properties, functionallities and more...
-function loadAPIConsumed() {
-    getAllUsers();
-}
-// Function created to render Listeners, HTML elements, consuming the service...
-function renderTemplate() {
-    printEmployeesTableList();
-    // Rendering all EventListeners when the app is starting 
-    addEvenListenerListToElements();
-}
-function printEmployeesTableList() {
-    var htmlTableContent = '';
-    // We are creating an for cycle to render all employees inside the list, one by one
-    employees.forEach(function (employee) {
-        var SSN = employee.SSN, FirstName = employee.FirstName, LastName = employee.LastName, Status = employee.Status, PersonID = employee.PersonID;
-        htmlTableContent += "\n            <tr>\n                <td> ".concat(SSN, " </td>\n                <td> ").concat(FirstName, " </td>\n                <td> ").concat(LastName, " </td>\n                <td> <button data-id=\"").concat(PersonID, "\" data-status=\"").concat(Status, "\" id=\"statusToggler\" class=\"").concat((Status === 0) ? 'active' : 'inactive', "\">").concat((Status === 0) ? 'ACTIVE' : 'INACTIVE', "</button> </td>\n                <td> \n                    <i id=\"editEmployee\" data-id=\"").concat(PersonID, "\" data-lname=\"").concat(LastName, "\" data-ssn=\"").concat(SSN, "\" data-name=\"").concat(FirstName, "\" data-status=\"").concat(Status, "\" class=\"fa-solid fa-pen-to-square\"></i> \n                    <i id=\"deleteEmployee\" data-id=\"").concat(PersonID, "\" class=\"fa-solid fa-trash-can\"></i>\n                </td>\n            </tr>\n        ");
-    });
-    // After iterating all employees, we are setting up into the HTML
-    $('#listBody').innerHTML = htmlTableContent;
-}
-function addEvenListenerListToElements() {
-    // Thats a iterator for each deleteEmployee button to add to it a listener, to every time we click on the button, it'll delete the selected Employee
-    addEventListenerToDeleteEmployeeElement();
-    // Iterator for adding listeners to every editEmployee button, every time we click on the button, it'll get the selected Employee data to the form, to be able to modify it
-    addEventListenerToEditEmployeeElement();
-    // that's a eventListener adder by a for each cycle, to be able to update the user state, just clicking on the button 'active' or 'inactive'
-    addEventListenerToStatusTogglerBtnElement();
-    // Adding createEmployeeBtn listener, to show the form, and reset possibly data inside
-    addEventListenerToCreateEmployeeBtnElement();
-    // Adding listener to saveEmployeeData to save the data, based on if is updating or saving data of the Employee for first time (creating...)
-    addEventListenerToSaveEmployeeDataElement();
-    addEventListenerToEmployeeStatusInput();
-}
-function addEventListenerToEmployeeStatusInput() {
-    employeeStatusInput.addEventListener('click', function () {
-        console.log(employeeStatusInput.checked);
-    });
-}
-function activateEventListenersForModalBtns(personID, action, status) {
-    activateEventListenersForModals(personID, action, status);
-}
-function activateEventListenersForModals(personID, action, status) {
-    addEventListenerCancelBtnModalElement(action);
-    addEventListenerConfirmEmployeeBtnModalElement(personID, action, status);
-}
-function addEventListenerCancelBtnModalElement(action) {
-    $$('#modalBtnCancel').forEach(function (cancelModalBtn) {
-        cancelModalBtn.addEventListener('click', function () {
-            if (action === 'delete') {
-                deleteEmpModal.classList.add('hidden');
-            }
-            else if (action === 'status') {
-                editStatusEmpModal.classList.add('hidden');
-            }
+var dom_elements_1 = require("./assets/dom-elements");
+var api_service_1 = require("./core/services/api-service");
+var employee_interface_1 = require("./core/interface/employee.interface");
+var employee_interface_2 = require("./core/interface/employee.interface");
+var listener_builder_1 = require("./assets/listener-builder");
+// const DE = new DOMElements(); // DE DOM Elements
+var service = new api_service_1.ApiService();
+var Renderer = /** @class */ (function () {
+    // lb = new ListenerBuilder();
+    function Renderer() {
+        var _this = this;
+        this.lb = new listener_builder_1.ListenerBuilder();
+        this.DE = new dom_elements_1.DOMElements();
+        // listener = new Listeners();
+        this.employees = [];
+        this.employee = {};
+        this.editing = false;
+        this.getAllUsers = function () {
+            fetch(service.getAllUsersRequest)
+                .then(function (response) { return response.json(); })
+                .then(function (responseJson) { _this.employees = responseJson; })
+                .then(function () { return _this.renderTemplate(); })
+                .catch(function (err) { return new Error(err); });
+        };
+        this.getEmployeeById = function (userID) {
+            fetch(service.getEmployeeByIdRequest(userID))
+                .then(function (response) { return response.json(); })
+                .then(function (responseJson) { return _this.employee = responseJson; })
+                .catch(function (err) { return new Error(err); });
+        };
+        this.createEmployee = function (data) {
+            fetch(service.createEmplRequest(data))
+                .then(function () { return _this.getAllUsers(); })
+                .catch(function (err) { return console.log(new Error(err)); });
+        };
+        this.updateEmployee = function (data) {
+            fetch(service.updateEmplRequest(data))
+                .then(function () { return _this.getAllUsers(); })
+                .catch(function (err) { return new Error(err); });
+        };
+        this.deleteEmployee = function (employeeID) {
+            fetch(service.deleteEmplRequest(employeeID))
+                .then(function () { return _this.getAllUsers(); })
+                .catch(function (err) { return new Error(err); });
+        };
+    }
+    Renderer.prototype.loadAPIConsumed = function () {
+        this.getAllUsers();
+    };
+    Renderer.prototype.renderTemplate = function () {
+        this.printEmployeesTableList();
+        // Rendering all EventListeners when the app is starting 
+        this.addEvenListenerListToElements();
+    };
+    Renderer.prototype.printEmployeesTableList = function () {
+        var htmlTableContent = '';
+        // We are creating an for cycle to render all employees inside the list, one by one
+        this.employees.forEach(function (employee) {
+            var SSN = employee.SSN, FirstName = employee.FirstName, LastName = employee.LastName, Status = employee.Status, PersonID = employee.PersonID;
+            htmlTableContent += "\n                <tr>\n                    <td> ".concat(SSN, " </td>\n                    <td> ").concat(FirstName, " </td>\n                    <td> ").concat(LastName, " </td>\n                    <td> <button data-id=\"").concat(PersonID, "\" data-status=\"").concat(Status, "\" id=\"statusToggler\" class=\"").concat((Status === 0) ? 'active' : 'inactive', "\">").concat((Status === 0) ? 'ACTIVE' : 'INACTIVE', "</button> </td>\n                    <td> \n                        <i id=\"editEmployee\" data-id=\"").concat(PersonID, "\" data-lname=\"").concat(LastName, "\" data-ssn=\"").concat(SSN, "\" data-name=\"").concat(FirstName, "\" data-status=\"").concat(Status, "\" class=\"fa-solid fa-pen-to-square\"></i> \n                        <i id=\"deleteEmployee\" data-id=\"").concat(PersonID, "\" class=\"fa-solid fa-trash-can\"></i>\n                    </td>\n                </tr>\n            ");
         });
-    });
-}
-function addEventListenerConfirmEmployeeBtnModalElement(personID, action, status) {
-    $$('#modalBtnConfirm').forEach(function (confirmModalBtn) {
-        confirmModalBtn.addEventListener('click', function () {
-            if (action === 'delete') {
-                deleteEmployee(personID);
-                deleteEmpModal.classList.add('hidden');
-            }
-            else if (action === 'status') {
-                updateEmployeeStatus(personID, status);
-                editStatusEmpModal.classList.add('hidden');
-            }
+        // After iterating all employees, we are setting up into the HTML
+        this.lb.$('#listBody').innerHTML = htmlTableContent;
+    };
+    Renderer.prototype.addEvenListenerListToElements = function () {
+        // Thats a iterator for each deleteEmployee button to add to it a listener, to every time we click on the button, it'll delete the selected Employee
+        this.addEventListenerToDeleteEmployeeElement();
+        // Iterator for adding listeners to every editEmployee button, every time we click on the button, it'll get the selected Employee data to the form, to be able to modify it
+        this.addEventListenerToEditEmployeeElement();
+        // that's a eventListener adder by a for each cycle, to be able to update the user state, just clicking on the button 'active' or 'inactive'
+        this.addEventListenerToStatusTogglerBtnElement();
+        // Adding createEmployeeBtn listener, to show the form, and reset possibly data inside
+        this.addEventListenerToCreateEmployeeBtnElement();
+        // Adding listener to saveEmployeeData to save the data, based on if is updating or saving data of the Employee for first time (creating...)
+        this.addEventListenerToSaveEmployeeDataElement();
+        this.addEventListenerToEmployeeStatusInput();
+    };
+    Renderer.prototype.transformEmployeeDataToJSON = function (data) {
+        return {
+            SSN: data.SSN,
+            Status: this.DE.employeeStatusInput.checked ? 1 : 0,
+            statusDV: this.DE.employeeStatusInput.checked ? employee_interface_1.Status.Active : employee_interface_1.Status.Suspended,
+            PersonID: data.PersonID != '' ? data.PersonID : (0, uuid_1.v4)(),
+            LastName: data.LastName,
+            FirstName: data.FirstName,
+            EmployeeNo: (Math.floor(Math.random() * 10000)).toString(),
+            LastUpdatedBy: employee_interface_2.EditorType.Admin,
+            LastUpdatedDate: new Date(),
+            EmploymentEndDate: null,
+            EmploymentStartDate: new Date,
+        };
+    };
+    Renderer.prototype.setEmployeeDataIntoFormToEdit = function (data) {
+        this.DE.personSSNInput.value = data.SSN;
+        this.DE.personIdInput.value = data.PersonID;
+        this.DE.lastNameInput.value = data.LastName;
+        this.DE.firstNameInput.value = data.FirstName;
+        this.DE.employeeStatusInput.checked = data.Status == 0 ? true : false;
+        this.DE.contentEmployees.classList.add('hidden');
+        this.DE.contentForm.classList.remove('hidden');
+    };
+    Renderer.prototype.updateEmployeeStatus = function (personID, status) {
+        var employeeJSON = {
+            PersonID: personID,
+            Status: status
+        };
+        this.updateEmployee(employeeJSON);
+    };
+    Renderer.prototype.activateEventListenersForModals = function (personID, action, status) {
+        this.addEventListenerCancelBtnModalElement(action);
+        this.addEventListenerConfirmEmployeeBtnModalElement(personID, action, status);
+    };
+    Renderer.prototype.activateEventListenersForModalBtns = function (personID, action, status) {
+        this.activateEventListenersForModals(personID, action, status);
+    };
+    Renderer.prototype.addEventListenerCancelBtnModalElement = function (action) {
+        var _this = this;
+        this.lb.$$('#modalBtnCancel').forEach(function (cancelModalBtn) {
+            cancelModalBtn.addEventListener('click', function () {
+                if (action === 'delete') {
+                    _this.DE.deleteEmpModal.classList.add('hidden');
+                }
+                else if (action === 'status') {
+                    _this.DE.editStatusEmpModal.classList.add('hidden');
+                }
+            });
         });
-    });
-}
-function addEventListenerToDeleteEmployeeElement() {
-    $$('#deleteEmployee').forEach(function (eliminarEmployeeBtn) {
-        eliminarEmployeeBtn.addEventListener('click', function (employee) {
-            var personID = employee.target.getAttribute('data-id');
-            deleteEmpModal.classList.remove('hidden');
-            activateEventListenersForModalBtns(personID, 'delete');
-            contentForm.classList.add('hidden');
+    };
+    Renderer.prototype.addEventListenerConfirmEmployeeBtnModalElement = function (personID, action, status) {
+        var _this = this;
+        this.lb.$$('#modalBtnConfirm').forEach(function (confirmModalBtn) {
+            confirmModalBtn.addEventListener('click', function () {
+                if (action === 'delete') {
+                    _this.deleteEmployee(personID);
+                    _this.DE.deleteEmpModal.classList.add('hidden');
+                }
+                else if (action === 'status') {
+                    _this.updateEmployeeStatus(personID, status);
+                    _this.DE.editStatusEmpModal.classList.add('hidden');
+                }
+            });
         });
-    });
-}
-function addEventListenerToEditEmployeeElement() {
-    $$('#editEmployee').forEach(function (editEmployeeBtn) {
-        editEmployeeBtn.addEventListener('click', function (emp) {
-            editing = true;
-            var PersonID = emp.target.getAttribute('data-id');
-            var SSN = emp.target.getAttribute('data-ssn');
-            var FirstName = emp.target.getAttribute('data-name');
-            var LastName = emp.target.getAttribute('data-lname');
-            var Status = emp.target.getAttribute('data-status');
-            // Saving employee info to persist the data
-            employee = {
-                PersonID: PersonID,
-                SSN: SSN,
-                FirstName: FirstName,
-                LastName: LastName,
-                Status: Status,
-            };
-            editingEmplTitle.innerHTML = "> ".concat(FirstName, " ").concat(LastName);
-            setEmployeeDataIntoFormToEdit(employee);
+    };
+    Renderer.prototype.addEventListenerToDeleteEmployeeElement = function () {
+        var _this = this;
+        this.lb.$$('#deleteEmployee').forEach(function (eliminarEmployeeBtn) {
+            eliminarEmployeeBtn.addEventListener('click', function (employee) {
+                var personID = employee.target.getAttribute('data-id');
+                _this.DE.deleteEmpModal.classList.remove('hidden');
+                _this.activateEventListenersForModalBtns(personID, 'delete');
+                _this.DE.contentForm.classList.add('hidden');
+            });
         });
-    });
-}
-function addEventListenerToStatusTogglerBtnElement() {
-    $$('#statusToggler').forEach(function (updateEmployeeStatusBtn) {
-        // emp (employee)
-        updateEmployeeStatusBtn.addEventListener('click', function (emp) {
-            var employeeID = emp.target.getAttribute('data-id');
-            var employeeStatus = emp.target.getAttribute('data-status');
-            editing = true;
-            editStatusEmpModal.classList.remove('hidden');
-            var newStatus;
-            if (employeeStatus == 0) {
-                newStatus = 1;
+    };
+    Renderer.prototype.addEventListenerToEditEmployeeElement = function () {
+        var _this = this;
+        this.lb.$$('#editEmployee').forEach(function (editEmployeeBtn) {
+            editEmployeeBtn.addEventListener('click', function (emp) {
+                _this.editing = true;
+                var PersonID = emp.target.getAttribute('data-id');
+                var SSN = emp.target.getAttribute('data-ssn');
+                var FirstName = emp.target.getAttribute('data-name');
+                var LastName = emp.target.getAttribute('data-lname');
+                var Status = emp.target.getAttribute('data-status');
+                // Saving employee info to persist the data
+                _this.employee = {
+                    PersonID: PersonID,
+                    SSN: SSN,
+                    FirstName: FirstName,
+                    LastName: LastName,
+                    Status: parseInt(Status),
+                };
+                _this.DE.editingEmplTitle.innerHTML = "> ".concat(FirstName, " ").concat(LastName);
+                _this.setEmployeeDataIntoFormToEdit(_this.employee);
+            });
+        });
+    };
+    Renderer.prototype.addEventListenerToStatusTogglerBtnElement = function () {
+        var _this = this;
+        this.lb.$$('#statusToggler').forEach(function (updateEmployeeStatusBtn) {
+            // emp (employee)
+            updateEmployeeStatusBtn.addEventListener('click', function (emp) {
+                var employeeID = emp.target.getAttribute('data-id');
+                var employeeStatus = emp.target.getAttribute('data-status');
+                _this.editing = true;
+                _this.DE.editStatusEmpModal.classList.remove('hidden');
+                var newStatus;
+                if (employeeStatus == 0) {
+                    newStatus = 1;
+                }
+                else {
+                    newStatus = 0;
+                }
+                _this.activateEventListenersForModalBtns(employeeID, 'status', newStatus);
+            });
+        });
+    };
+    Renderer.prototype.addEventListenerToCreateEmployeeBtnElement = function () {
+        var _this = this;
+        this.DE.createEmployeeBtn.addEventListener('click', function () {
+            _this.editing = false;
+            _this.DE.form.reset();
+            _this.DE.contentEmployees.classList.add('hidden');
+            _this.DE.contentForm.classList.remove('hidden');
+        });
+    };
+    Renderer.prototype.addEventListenerToSaveEmployeeDataElement = function () {
+        var _this = this;
+        this.DE.saveEmployeeData.addEventListener('click', function () {
+            if (_this.editing) {
+                _this.employee = {
+                    PersonID: _this.DE.personIdInput.value,
+                    SSN: _this.DE.personSSNInput.value,
+                    LastName: _this.DE.lastNameInput.value,
+                    FirstName: _this.DE.firstNameInput.value,
+                    Status: _this.DE.employeeStatusInput.checked ? 0 : 1,
+                    StatusDV: _this.DE.employeeStatusInput.checked ? employee_interface_1.Status.Active : employee_interface_1.Status.Suspended
+                };
+                _this.updateEmployee(_this.employee);
+                _this.DE.form.reset();
+                _this.DE.contentForm.classList.add('hidden');
+                _this.DE.contentEmployees.classList.remove('hidden');
+                _this.DE.editingEmplTitle.innerHTML = '';
             }
             else {
-                newStatus = 0;
+                _this.employee = {
+                    PersonID: _this.DE.personIdInput.value,
+                    SSN: _this.DE.personSSNInput.value,
+                    LastName: _this.DE.lastNameInput.value,
+                    FirstName: _this.DE.firstNameInput.value,
+                    Status: _this.DE.employeeStatusInput.checked ? 0 : 1,
+                    StatusDV: _this.DE.employeeStatusInput.checked ? employee_interface_1.Status.Active : employee_interface_1.Status.Suspended
+                };
+                console.log(_this.employee);
+                _this.createEmployee(_this.transformEmployeeDataToJSON(_this.employee));
+                _this.DE.contentForm.classList.add('hidden');
+                _this.DE.contentEmployees.classList.remove('hidden');
+                _this.DE.form.reset();
             }
-            activateEventListenersForModalBtns(employeeID, 'status', newStatus);
         });
-    });
-}
-function addEventListenerToCreateEmployeeBtnElement() {
-    createEmployeeBtn.addEventListener('click', function () {
-        editing = false;
-        form.reset();
-        contentEmployees.classList.add('hidden');
-        contentForm.classList.remove('hidden');
-    });
-}
-function addEventListenerToSaveEmployeeDataElement() {
-    saveEmployeeData.addEventListener('click', function () {
-        if (editing) {
-            employee = {
-                PersonID: personIdInput.value,
-                SSN: personSSNInput.value,
-                LastName: lastNameInput.value,
-                FirstName: firstNameInput.value,
-                Status: employeeStatusInput.checked ? 0 : 1,
-                StatusSV: employeeStatusInput.checked ? 'Active' : 'Suspended'
-            };
-            console.log(employee);
-            updateEmployee(employee);
-            form.reset();
-            contentForm.classList.add('hidden');
-            contentEmployees.classList.remove('hidden');
-            editingEmplTitle.innerHTML = '';
-        }
-        else {
-            employee = {
-                PersonID: personIdInput.value,
-                SSN: personSSNInput.value,
-                LastName: lastNameInput.value,
-                FirstName: firstNameInput.value,
-                Status: employeeStatusInput.checked ? 0 : 1,
-                StatusSV: employeeStatusInput.checked ? 'Active' : 'Suspended'
-            };
-            console.log(employee);
-            createEmployee(transformEmployeeDataToJSON(employee));
-            contentForm.classList.add('hidden');
-            contentEmployees.classList.remove('hidden');
-            form.reset();
-        }
-    });
-    cancelSavingEmplData.addEventListener('click', function () {
-        employee = {};
-        editingEmplTitle.innerHTML = '';
-        contentEmployees.classList.remove('hidden');
-        contentForm.classList.add('hidden');
-    });
-}
-// FUNCTIONS QUERYSELECTOR FOR HTMLELEMENTS THAT DOESN'T NEED DECLARE VARIABLE IN TS
-// Function that gives us the facility to add listeners to an specific HTMLelement
-function $(tagSelector) {
-    return document.querySelector(tagSelector);
-}
-// Function to be able to add multiples listeners to a multiples buttons, that are equals, putting listeners by for each cycle
-function $$(tagSelector) {
-    return document.querySelectorAll(tagSelector);
-}
-// That set up the editing data into the form
-function setEmployeeDataIntoFormToEdit(data) {
-    personSSNInput.value = data.SSN;
-    personIdInput.value = data.PersonID;
-    lastNameInput.value = data.LastName;
-    firstNameInput.value = data.FirstName;
-    employeeStatusInput.checked = data.Status == 0 ? true : false;
-    contentEmployees.classList.add('hidden');
-    contentForm.classList.remove('hidden');
-}
-// Transforming the first body of the Employee, to a new formated body to be able to update it in the Service consume
-function transformEmployeeDataToJSON(data) {
-    return {
-        PersonID: data.PersonID != '' ? data.PersonID : (0, uuid_1.v4)(),
-        FirstName: data.FirstName,
-        LastName: data.LastName,
-        LastUpdatedBy: "admin",
-        LastUpdatedDate: new Date(),
-        SSN: data.SSN,
-        EmployeeNo: (Math.floor(Math.random() * 10000)).toString(),
-        EmploymentEndDate: null,
-        EmploymentStartDate: new Date,
-        Status: employeeStatusInput.checked ? 1 : 0,
-        statusDV: employeeStatusInput.checked ? 'Active' : 'Suspended'
+        this.DE.cancelSavingEmplData.addEventListener('click', function () {
+            _this.employee = {};
+            _this.DE.editingEmplTitle.innerHTML = '';
+            _this.DE.contentEmployees.classList.remove('hidden');
+            _this.DE.contentForm.classList.add('hidden');
+        });
     };
-}
-function updateEmployeeStatus(personID, status) {
-    var employeeJSON = {
-        PersonID: personID,
-        Status: status
+    Renderer.prototype.addEventListenerToEmployeeStatusInput = function () {
+        this.DE.employeeStatusInput.addEventListener('click', function () {
+        });
     };
-    updateEmployee(employeeJSON);
-}
-loadAPIConsumed();
+    return Renderer;
+}());
+exports.Renderer = Renderer;
+var renderer = new Renderer();
+renderer.loadAPIConsumed();
 
-},{"uuid":1}]},{},[16]);
+},{"./assets/dom-elements":16,"./assets/listener-builder":17,"./core/interface/employee.interface":18,"./core/services/api-service":19,"uuid":1}]},{},[21]);
